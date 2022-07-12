@@ -1,17 +1,10 @@
 import 'package:bloc_todo/domain/entities/todo.dart';
 
-class TodoState {
+class HomeState {
   final List<Todo> todosList;
 
-  TodoState({
+  const HomeState({
     this.todosList = const <Todo>[],
   });
 }
 
-class SaveButtonState {
-  final bool isEmpty;
-
-  SaveButtonState({
-    this.isEmpty = true,
-  });
-}

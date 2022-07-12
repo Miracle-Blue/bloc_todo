@@ -1,13 +1,7 @@
-import 'package:bloc_todo/domain/bloc/todo_bloc.dart';
-import 'package:bloc_todo/domain/bloc/todo_event.dart';
-import 'package:bloc_todo/domain/bloc/todo_state.dart';
+import 'package:bloc_todo/domain/blocs/home_bloc/home_bloc.dart';
 import 'package:bloc_todo/domain/entities/todo.dart';
-import 'package:bloc_todo/domain/services/todo_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'create_page.dart';
-import 'edit_page.dart';
 
 class HomePage extends StatelessWidget {
   static const id = '/home_page';
@@ -16,36 +10,34 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     context.read<TodoBloc>().add(const TodoLoadEvent());
+    context.read<HomeBloc>().add(const HomeLoadEvent());
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Todo App'),
       ),
-      body: BlocBuilder<TodoBloc, TodoState>(
+      body: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
           return ListView.builder(
             itemCount: state.todosList.length,
             itemBuilder: (context, index) {
-              return TodoList(todo: state.todosList[index]);
+              return _TodoList(todo: state.todosList[index]);
             },
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, CreatePage.id);
-        },
         child: const Icon(Icons.add),
+        onPressed: () => context.read<HomeBloc>().openForCreate(context),
       ),
     );
   }
 }
 
-class TodoList extends StatelessWidget {
+class _TodoList extends StatelessWidget {
   final Todo todo;
 
-  const TodoList({
+  const _TodoList({
     Key? key,
     required this.todo,
   }) : super(key: key);
@@ -58,29 +50,38 @@ class TodoList extends StatelessWidget {
         vertical: 10,
       ),
       child: ListTile(
+        onTap: () => context.read<HomeBloc>().openForRead(
+              context,
+              todo,
+            ),
         title: Text(
           todo.title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),
         ),
         subtitle: Text(
           todo.description,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () {
-                Navigator.pushNamed(context, EditPage.id, arguments: todo);
-              },
+              icon: const Icon(Icons.delete),
+              onPressed: () => context.read<HomeBloc>().add(
+                    HomeDeleteEvent(todo),
+                  ),
             ),
             IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: () {
-                context.read<TodoBloc>().add(TodoDeleteEvent(todo));
-              },
+              icon: const Icon(Icons.edit),
+              onPressed: () => context.read<HomeBloc>().openForEdit(
+                    context,
+                    todo,
+                  ),
             ),
           ],
         ),

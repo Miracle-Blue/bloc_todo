@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:bloc_todo/domain/data_provider/api_provider.dart';
 import 'package:bloc_todo/domain/entities/todo.dart';
 
-final todoApiProvider = TodoApiProvider();
+final todoApiProvider = _TodoApiProvider();
 
-class TodoApiProvider {
+class _TodoApiProvider {
   // * APIs
   final apiGetTodos = '/api/v1/todo';
   final apiGetSingleTodo = '/api/v1/todo/'; // 'id'
@@ -41,17 +41,17 @@ class TodoApiProvider {
     }
   }
 
-  void updateTodo(Todo newTodo) async {
+  void updateTodo(String? id, Map<String, String> newTodo) async {
     await ApiProvider.PUT(
-      apiUpdateTodo + newTodo.id!,
-      newTodo.toJson(),
+      apiUpdateTodo + id!,
+      newTodo,
     );
   }
 
-  Future<Todo> createTodo(Todo newTodo) async {
+  Future<Todo> createTodo(Map<String, String> newTodo) async {
     final json = await ApiProvider.POST(
       apiCreateTodo,
-      newTodo.toJson(),
+      newTodo,
     );
 
     return Todo.fromJson(jsonDecode(json!));

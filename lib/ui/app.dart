@@ -1,9 +1,10 @@
-import 'package:bloc_todo/domain/bloc/todo_bloc.dart';
-import 'package:bloc_todo/ui/pages/create_page.dart';
-import 'package:bloc_todo/ui/pages/edit_page.dart';
+import 'package:bloc_todo/domain/blocs/detail_bloc/detail_bloc.dart';
+import 'package:bloc_todo/domain/blocs/home_bloc/home_bloc.dart';
+import 'package:bloc_todo/domain/entities/todo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'pages/detail_page.dart';
 import 'pages/home_page.dart';
 
 class MyApp extends StatelessWidget {
@@ -14,25 +15,34 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => TodoBloc(),
+          create: (context) => HomeBloc(),
         ),
         BlocProvider(
-          create: (context) => SaveButtonBloc(),
+          create: (context) => DetailBloc(),
         ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: Colors.blueGrey,
         ),
         home: const HomePage(),
         routes: {
           HomePage.id: (context) => const HomePage(),
-          EditPage.id: (context) => EditPage(),
-          CreatePage.id: (context) => CreatePage(),
+          DetailPage.id: (context) => const DetailPage(),
         },
       ),
     );
   }
+}
+
+class RouteArgs {
+  final DState detailState;
+  final Todo? todo;
+
+  const RouteArgs({
+    required this.detailState,
+    required this.todo,
+  });
 }
