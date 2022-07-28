@@ -3,7 +3,6 @@ export 'detail_state.dart';
 
 import 'package:bloc_todo/domain/blocs/home_bloc/home_bloc.dart';
 import 'package:bloc_todo/domain/entities/todo.dart';
-import 'package:bloc_todo/domain/services/todo_api_provider.dart';
 import 'package:bloc_todo/ui/app.dart';
 import 'package:bloc_todo/ui/pages/detail_page.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +25,7 @@ class DetailBloc extends Bloc<DetailEvent, DetailState> {
   set setTodo(Todo? todo) {
     state.todo ??= todo;
 
-    if (state.deatilState == DState.read) {
+    if (state.detailState == DState.read) {
       readOnly = true;
     } else {
       readOnly = false;
@@ -35,6 +34,7 @@ class DetailBloc extends Bloc<DetailEvent, DetailState> {
 
   DetailBloc() : super(DetailState());
 
+  // ! control methods
   void editTodo(BuildContext context) {
     final newTodo = Todo(
       id: state.todo!.id,
@@ -44,6 +44,9 @@ class DetailBloc extends Bloc<DetailEvent, DetailState> {
     );
 
     context.read<HomeBloc>().add(HomeEditEvent(newTodo));
+
+    titleController.clear();
+    descriptionController.clear();
 
     Navigator.pop(context);
   }
@@ -57,23 +60,30 @@ class DetailBloc extends Bloc<DetailEvent, DetailState> {
 
     context.read<HomeBloc>().add(HomeCreateEvent(newTodo));
 
+    titleController.clear();
+    descriptionController.clear();
+
     Navigator.pop(context);
   }
 
-  void pressedEdit(BuildContext context) {
+  void pressedEdit(BuildContext context, Todo todo) {
+
+    titleController.clear();
+    descriptionController.clear();
+
     Navigator.pushReplacementNamed(
       context,
       DetailPage.id,
       arguments: RouteArgs(
         detailState: DState.edit,
-        todo: state.todo,
+        todo: todo,
       ),
     );
   }
 
   void pressedSave(BuildContext context) async {
-    switch (state.deatilState) {
-      case DState.creat:
+    switch (state.detailState) {
+      case DState.create:
         createTodo(context);
         break;
       case DState.edit:

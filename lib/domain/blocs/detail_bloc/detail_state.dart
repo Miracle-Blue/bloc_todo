@@ -1,9 +1,9 @@
 import 'package:bloc_todo/domain/entities/todo.dart';
 
-enum DState {read, edit, creat }
+enum DState {read, edit, create }
 
 class DetailState {
-  DState? deatilState;
+  DState? detailState;
   Todo? todo;
 
   DetailState(); 

@@ -18,11 +18,16 @@ class HomePage extends StatelessWidget {
       ),
       body: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
-          return ListView.builder(
-            itemCount: state.todosList.length,
-            itemBuilder: (context, index) {
-              return _TodoList(todo: state.todosList[index]);
-            },
+          return RefreshIndicator(
+            child: ListView.builder(
+              itemCount: state.todosList.length,
+              itemBuilder: (context, index) {
+                return _TodoList(todo: state.todosList[index]);
+              },
+            ),
+            onRefresh: () async => context.read<HomeBloc>().add(
+                  const HomeLoadEvent(),
+                ),
           );
         },
       ),
@@ -50,10 +55,7 @@ class _TodoList extends StatelessWidget {
         vertical: 10,
       ),
       child: ListTile(
-        onTap: () => context.read<HomeBloc>().openForRead(
-              context,
-              todo,
-            ),
+        onTap: () => context.read<HomeBloc>().openForRead(context, todo),
         title: Text(
           todo.title,
           maxLines: 1,

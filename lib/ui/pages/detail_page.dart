@@ -10,23 +10,19 @@ class DetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DetailBloc, DetailState>(builder: (
-      context,
-      state,
-    ) {
+    return BlocBuilder<DetailBloc, DetailState>(builder: (context, state) {
       final rougeArgs = ModalRoute.of(context)!.settings.arguments as RouteArgs;
-
-      state.deatilState = rougeArgs.detailState;
+      state.detailState = rougeArgs.detailState;
       context.read<DetailBloc>().setTodo = rougeArgs.todo;
 
       return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
           actions: [
-            if (state.deatilState == DState.read)
+            if (state.detailState == DState.read)
               IconButton(
                 onPressed: () =>
-                    context.read<DetailBloc>().pressedEdit(context),
+                    context.read<DetailBloc>().pressedEdit(context, rougeArgs.todo!),
                 icon: const Icon(
                   Icons.edit,
                   color: Colors.black,

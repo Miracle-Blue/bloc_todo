@@ -25,14 +25,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   void _todoLoadEvent(HomeLoadEvent event, Emitter<HomeState> emit) async {
     final todos = await todoApiProvider.getTodos();
 
-    emit(HomeState(todosList: todos));
+    emit(HomeState(todosList: todos.reversed.toList()));
   }
 
   void _todoCreteEvent(HomeCreateEvent event, Emitter<HomeState> emit) async {
     final todo = await todoApiProvider.createTodo(event.todo.toJson());
 
     emit(HomeState(
-      todosList: [todo, ...state.todosList],
+      todosList: [todo, ...state.todosList.reversed],
     ));
   }
 
@@ -47,7 +47,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       HomeState(
         todosList: state.todosList
           ..insert(index, event.todo)
-          ..removeAt(index + 1),
+          ..removeAt(index + 1)..reversed.toList(),
       ),
     );
   }
@@ -61,19 +61,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     emit(
       HomeState(
-        todosList: state.todosList..removeAt(index),
+        todosList: state.todosList..removeAt(index)..reversed.toList(),
       ),
     );
   }
 
 
-  // ! controll methods
+  // ! control methods
   void openForCreate(BuildContext context) async {
     await Navigator.pushNamed(
       context,
       DetailPage.id,
       arguments: const RouteArgs(
-        detailState: DState.creat,
+        detailState: DState.create,
         todo: null,
       ),
     );
